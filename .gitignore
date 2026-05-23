@@ -1,0 +1,59 @@
+# Project notes
+TODO.md
+
+# Python cache and build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+Thumbs.db
+.DS_Store
+
+# Logs and local runtime files
+*.log
+*.tmp
+*.bak
+
+# Generated datasets and exports
+Data/raw/*
+Data/processed/*
+!Data/raw/.gitkeep
+!Data/processed/.gitkeep
+!Data/raw/README.md
+!Data/processed/README.md
+!Data/raw/.gitignore
+!Data/processed/.gitignore
+
+# Common data analysis outputs
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.parquet
+*.feather
+*.pkl
+*.joblib

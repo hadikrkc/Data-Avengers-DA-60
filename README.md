@@ -42,3 +42,28 @@ More detailed system design will be added in the Documentation section.
 A detailed problem analysis can be found in the Documentation section:
 
 - Documentation/reports/problem_analysis.md
+
+## Dataset Setup
+
+Raw datasets are stored locally under `Data/raw/` and are intentionally excluded from Git tracking.
+
+Current dataset folders:
+
+- `IMDb Dataset`
+- `Rotten Tomatoes movies and critic reviews dataset`
+- `The Movies Dataset`
+- `TMDB 5000 Movies Dataset`
+
+Dataset sources:
+
+- `The Movies Dataset`: https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset
+- `TMDB 5000 Movies Dataset`: https://www.kaggle.com/datasets/muhammadnaumank/tmdb-5000-movies-dataset
+- `Rotten Tomatoes movies and critic reviews dataset`: https://www.kaggle.com/datasets/stefanoleone992/rotten-tomatoes-movies-and-critic-reviews-dataset
+- `IMDb Dataset`: https://www.kaggle.com/datasets/ashirwadsangwan/imdb-dataset
+
+Recommended usage:
+
+- Keep downloaded raw files in `Data/raw/`.
+- Keep cleaned, merged, or renamed outputs in `Data/processed/`.
+- Do not edit raw source files in place unless there is a strong reason.
+- If folder or file names are standardized later, update all notebook and script paths accordingly.
