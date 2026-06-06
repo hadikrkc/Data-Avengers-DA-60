@@ -24,37 +24,63 @@ The movie industry is one of the most competitive industries, where budgets can 
 
 Our goal is to collect a relevant movie dataset, analyze the data, create useful visualizations, and present clear findings on the relationship between movie budget and success.
 
+## Results Summary
+
+| Dimension | Finding |
+|---|---|
+| Budget → Revenue | Strong positive correlation — r = **0.70**, r² ≈ 0.50 |
+| Budget → IMDb Rating | Near-zero — r = -0.057; budget does not buy quality |
+| Budget → Tomatometer | Slightly negative — r = -0.176; more budget, marginally worse critic scores |
+| Best ROI tier | **Low budget** — median ROI 180% vs 69% for High tier |
+
+**Short answer:** Budget predicts revenue but not quality. Low-budget films deliver better ROI and equal or higher audience ratings.
+
+---
+
+## Project Structure
+
+```
+Data-Avengers-DA-60/
+├── Data/
+│   ├── raw/            # Source datasets (git-ignored)
+│   └── processed/      # movies_merged.csv (5,381 rows, 20 columns)
+├── Source/
+│   ├── notebooks/      # 01–04 Jupyter notebooks
+│   └── scripts/        # helpers.py, load_data.py, clean_data.py, merge_data.py
+├── Documentation/
+│   └── reports/        # data_overview.md, eda_summary.md, final_report.md
+├── requirements.txt
+└── README.md
+```
+
+## Running the Project
+
+```bash
+pip install -r requirements.txt
+jupyter lab
+```
+
+Run notebooks in order: `01 → 02 → 03 → 04`
+
 ## System Design & Workflow
 
-The project follows a structured data analysis pipeline:
+1. **Data Collection** — 4 Kaggle datasets downloaded to `Data/raw/`
+2. **Data Cleaning & Preprocessing** — `clean_data.py`: 8 functions, zero-budget filter, feature engineering
+3. **Dataset Merge** — `merge_data.py`: IMDb join via imdb_id (99.96%), RT join via normalized title (81.3%)
+4. **Exploratory Data Analysis** — `03_eda.ipynb`: 11 plots, correlations, ROI by tier, decade trends
+5. **Final Visualization** — `04_final_analysis.ipynb`: 4 key findings + conclusion
+7. **Reporting** — `Documentation/reports/final_report.md`
 
-1. Data Collection
-2. Data Cleaning & Preprocessing
-3. Exploratory Data Analysis (EDA)
-4. Feature Engineering
-5. Visualization & Insights
-6. Conclusion & Reporting
+## Documentation
 
-More detailed system design will be added in the Documentation section.
+- `Documentation/reports/problem_analysis.md` — problem definition, research questions, and scope
+- `Documentation/reports/data_overview.md` — dataset inspection findings
+- `Documentation/reports/eda_summary.md` — EDA key numbers and interpretations
+- `Documentation/reports/final_report.md` — complete project report
 
-## Problem Analysis
+## Dataset Sources
 
-A detailed problem analysis can be found in the Documentation section:
-
-- Documentation/reports/problem_analysis.md
-
-## Dataset Setup
-
-Raw datasets are stored locally under `Data/raw/` and are intentionally excluded from Git tracking.
-
-Current dataset folders:
-
-- `IMDb Dataset`
-- `Rotten Tomatoes movies and critic reviews dataset`
-- `The Movies Dataset`
-- `TMDB 5000 Movies Dataset`
-
-Dataset sources:
+Raw datasets are stored locally under `Data/raw/` and excluded from Git tracking.
 
 - `The Movies Dataset`: https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset
 - `TMDB 5000 Movies Dataset`: https://www.kaggle.com/datasets/muhammadnaumank/tmdb-5000-movies-dataset
