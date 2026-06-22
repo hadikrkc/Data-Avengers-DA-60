@@ -75,12 +75,13 @@ After running each notebook, execute the **Export** cell at the bottom to genera
 streamlit run Source/streamlit_app.py
 ```
 
-Five pages:
+Six pages:
 - **Overview** — key findings and ML summary table
 - **EDA** — interactive budget/revenue/ROI/genre/decade charts
 - **ML Regression** — feature importance, actual vs predicted, residual analysis
 - **ML Classification** — ROC curve, confusion matrices, metric comparison
 - **Film Predictor** — enter budget/runtime/genre to get a revenue prediction and hit/flop probability
+- **Dataset** — browse, filter, and download movies_merged.csv
 
 ## System Design & Workflow
 
