@@ -70,3 +70,38 @@
 | roi | (revenue - budget) / budget * 100 | Return on investment |
 | budget_tier | quartile cut: Low / Mid / High / Blockbuster | Budget group label |
 | decade | release_year // 10 * 10, e.g. 2000s | Era grouping |
+
+---
+
+## movies_merged.csv — Full Column Lineage
+
+All 20 columns in the final dataset, with their source and fill rate.
+
+| Column | Source Dataset | Source File | Fill Rate |
+|---|---|---|---|
+| `id` | The Movies Dataset | movies_metadata.csv | 100% |
+| `imdb_id` | The Movies Dataset | movies_metadata.csv | 100% |
+| `title` | The Movies Dataset | movies_metadata.csv | 100% |
+| `title_clean` | The Movies Dataset | movies_metadata.csv (derived via normalize_title) | 100% |
+| `budget` | The Movies Dataset | movies_metadata.csv | 100% (zero-budget rows removed) |
+| `revenue` | The Movies Dataset | movies_metadata.csv | 100% (zero-revenue rows removed) |
+| `runtime` | The Movies Dataset | movies_metadata.csv | ~99% |
+| `release_year` | The Movies Dataset | movies_metadata.csv (extracted from release_date) | ~99% |
+| `primary_genre` | The Movies Dataset | movies_metadata.csv (first item from genres JSON) | ~98% |
+| `vote_average` | The Movies Dataset | movies_metadata.csv | 100% |
+| `vote_count` | The Movies Dataset | movies_metadata.csv | 100% |
+| `popularity` | The Movies Dataset | movies_metadata.csv | 100% |
+| `tmdb_popularity` | TMDB 5000 Movies Dataset | tmdb_5000_movies.csv | ~60% (title-match join) |
+| `imdb_rating` | IMDb Dataset | title.ratings.tsv | **99.96%** (imdb_id join) |
+| `imdb_votes` | IMDb Dataset | title.ratings.tsv | **99.96%** (imdb_id join) |
+| `tomatometer_rating` | Rotten Tomatoes | rotten_tomatoes_movies.csv | **81.3%** (title-match join) |
+| `audience_rating` | Rotten Tomatoes | rotten_tomatoes_movies.csv | ~80% (title-match join) |
+| `roi` | Derived | — | 100% (revenue − budget) / budget × 100 |
+| `budget_tier` | Derived | — | 100% (quartile cut: Low / Mid / High / Blockbuster) |
+| `decade` | Derived | — | 100% (release_year // 10 × 10) |
+
+**Notes:**
+- `title_clean`, `release_year`, `primary_genre` are extracted/transformed from movies_metadata columns during the cleaning step (`clean_data.py`)
+- `tmdb_popularity` fill rate is lower because the join is done via normalized title — some titles don't match across datasets
+- `tomatometer_rating` and `audience_rating` use the same title-match join as tmdb_popularity; the ~19% gap is mostly foreign or independent films absent from the RT dataset
+- All four source files used are listed above; the remaining downloaded files (credits.csv, keywords.csv, title.basics.tsv, etc.) were not incorporated into the final dataset

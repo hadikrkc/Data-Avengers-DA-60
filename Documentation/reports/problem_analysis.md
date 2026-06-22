@@ -42,15 +42,25 @@ This analysis can help identify whether budget is truly a strong success factor 
 
 ## 5. Generate Analytical Approach
 
-The project will compare high budget and low budget movies, observe revenue patterns, check audience rating trends, and identify exceptions where low budget movies performed better than expensive movies.  
+The project will compare high budget and low budget movies, observe revenue patterns, check audience rating trends, and identify exceptions where low budget movies performed better than expensive movies.
 
 It will also use correlation analysis and visualizations to understand the relationship between budget, ratings, and box office revenue.
+
+In the machine learning phase, two complementary approaches are applied:
+- **Regression:** predict the exact box office revenue from pre-release features (budget, runtime, genre, release year, decade)
+- **Classification:** predict whether a film will be a commercial hit or flop (binary label derived from the median revenue threshold)
 
 ---
 
 ## 6. Choose the Best Analysis Method
 
 The best method for this project is to use exploratory data analysis, comparison charts, and correlation analysis. These methods will make it easier to see whether bigger budgets are connected to stronger box office results and better ratings, or whether the relationship is weak or inconsistent.
+
+For the predictive modeling phase, the selected methods are:
+- **Linear Regression & Random Forest Regressor** — for revenue prediction (continuous output)
+- **Logistic Regression & Random Forest Classifier** — for hit/flop classification (binary output)
+
+Both approaches use only pre-release features to ensure the models have real-world predictive value.
 
 ---
 
