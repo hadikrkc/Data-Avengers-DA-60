@@ -1,0 +1,79 @@
+[
+  {
+    "decade": "1910s",
+    "count": 4,
+    "median_budget": 150000.0,
+    "median_revenue": 8000000.0,
+    "median_roi": 3500.0
+  },
+  {
+    "decade": "1920s",
+    "count": 17,
+    "median_budget": 373000.0,
+    "median_revenue": 966878.0,
+    "median_roi": 112.74
+  },
+  {
+    "decade": "1930s",
+    "count": 38,
+    "median_budget": 916500.0,
+    "median_revenue": 2605000.0,
+    "median_roi": 295.03
+  },
+  {
+    "decade": "1940s",
+    "count": 45,
+    "median_budget": 1400000.0,
+    "median_revenue": 6000000.0,
+    "median_roi": 283.33
+  },
+  {
+    "decade": "1950s",
+    "count": 75,
+    "median_budget": 2000000.0,
+    "median_revenue": 9000000.0,
+    "median_roi": 368.13
+  },
+  {
+    "decade": "1960s",
+    "count": 130,
+    "median_budget": 3500000.0,
+    "median_revenue": 12649834.0,
+    "median_roi": 278.89
+  },
+  {
+    "decade": "1970s",
+    "count": 190,
+    "median_budget": 3600000.0,
+    "median_revenue": 25707329.0,
+    "median_roi": 528.37
+  },
+  {
+    "decade": "1980s",
+    "count": 520,
+    "median_budget": 11000000.0,
+    "median_revenue": 21611388.0,
+    "median_roi": 146.29
+  },
+  {
+    "decade": "1990s",
+    "count": 942,
+    "median_budget": 22000000.0,
+    "median_revenue": 25900880.0,
+    "median_roi": 73.94
+  },
+  {
+    "decade": "2000s",
+    "count": 1780,
+    "median_budget": 25000000.0,
+    "median_revenue": 38554791.5,
+    "median_roi": 72.82
+  },
+  {
+    "decade": "2010s",
+    "count": 1640,
+    "median_budget": 19750000.0,
+    "median_revenue": 36943696.5,
+    "median_roi": 108.66
+  }
+]

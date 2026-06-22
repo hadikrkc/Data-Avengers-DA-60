@@ -1,0 +1,162 @@
+[
+  {
+    "primary_genre": "Action",
+    "count": 961,
+    "median_budget": 28000000.0,
+    "median_revenue": 45000000.0,
+    "median_roi": 88.28,
+    "avg_imdb": 6.29
+  },
+  {
+    "primary_genre": "Adventure",
+    "count": 416,
+    "median_budget": 40000000.0,
+    "median_revenue": 90319368.5,
+    "median_roi": 132.71,
+    "avg_imdb": 6.61
+  },
+  {
+    "primary_genre": "Animation",
+    "count": 146,
+    "median_budget": 59500000.0,
+    "median_revenue": 140168399.0,
+    "median_roi": 145.3,
+    "avg_imdb": 6.68
+  },
+  {
+    "primary_genre": "Comedy",
+    "count": 1067,
+    "median_budget": 15000000.0,
+    "median_revenue": 29916207.0,
+    "median_roi": 118.25,
+    "avg_imdb": 6.28
+  },
+  {
+    "primary_genre": "Crime",
+    "count": 267,
+    "median_budget": 14000000.0,
+    "median_revenue": 22540359.0,
+    "median_roi": 83.64,
+    "avg_imdb": 6.81
+  },
+  {
+    "primary_genre": "Documentary",
+    "count": 48,
+    "median_budget": 1100000.0,
+    "median_revenue": 2559971.5,
+    "median_roi": 146.33,
+    "avg_imdb": 7.06
+  },
+  {
+    "primary_genre": "Drama",
+    "count": 1316,
+    "median_budget": 12000000.0,
+    "median_revenue": 17992946.5,
+    "median_roi": 74.05,
+    "avg_imdb": 6.86
+  },
+  {
+    "primary_genre": "Family",
+    "count": 55,
+    "median_budget": 35000000.0,
+    "median_revenue": 100086793.0,
+    "median_roi": 182.99,
+    "avg_imdb": 6.36
+  },
+  {
+    "primary_genre": "Fantasy",
+    "count": 140,
+    "median_budget": 27500000.0,
+    "median_revenue": 67681638.0,
+    "median_roi": 116.24,
+    "avg_imdb": 6.45
+  },
+  {
+    "primary_genre": "Foreign",
+    "count": 4,
+    "median_budget": 487500.0,
+    "median_revenue": 1740825.5,
+    "median_roi": 232.65,
+    "avg_imdb": 6.4
+  },
+  {
+    "primary_genre": "History",
+    "count": 29,
+    "median_budget": 14000000.0,
+    "median_revenue": 25000000.0,
+    "median_roi": 156.45,
+    "avg_imdb": 7.04
+  },
+  {
+    "primary_genre": "Horror",
+    "count": 325,
+    "median_budget": 7400000.0,
+    "median_revenue": 28650575.0,
+    "median_roi": 202.7,
+    "avg_imdb": 5.94
+  },
+  {
+    "primary_genre": "Music",
+    "count": 34,
+    "median_budget": 16500000.0,
+    "median_revenue": 22487524.5,
+    "median_roi": 76.87,
+    "avg_imdb": 6.65
+  },
+  {
+    "primary_genre": "Mystery",
+    "count": 67,
+    "median_budget": 15000000.0,
+    "median_revenue": 19853892.0,
+    "median_roi": 32.36,
+    "avg_imdb": 6.48
+  },
+  {
+    "primary_genre": "Romance",
+    "count": 121,
+    "median_budget": 14000000.0,
+    "median_revenue": 19450000.0,
+    "median_roi": 99.25,
+    "avg_imdb": 6.57
+  },
+  {
+    "primary_genre": "Science Fiction",
+    "count": 104,
+    "median_budget": 27500000.0,
+    "median_revenue": 68191994.5,
+    "median_roi": 157.95,
+    "avg_imdb": 6.43
+  },
+  {
+    "primary_genre": "TV Movie",
+    "count": 1,
+    "median_budget": 5000000.0,
+    "median_revenue": 42000000.0,
+    "median_roi": 740.0,
+    "avg_imdb": 6.3
+  },
+  {
+    "primary_genre": "Thriller",
+    "count": 199,
+    "median_budget": 17000000.0,
+    "median_revenue": 33333531.0,
+    "median_roi": 100.04,
+    "avg_imdb": 6.32
+  },
+  {
+    "primary_genre": "War",
+    "count": 38,
+    "median_budget": 19250000.0,
+    "median_revenue": 22025497.0,
+    "median_roi": 1.41,
+    "avg_imdb": 6.83
+  },
+  {
+    "primary_genre": "Western",
+    "count": 31,
+    "median_budget": 5500000.0,
+    "median_revenue": 9012000.0,
+    "median_roi": 137.13,
+    "avg_imdb": 7.27
+  }
+]

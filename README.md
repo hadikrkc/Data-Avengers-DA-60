@@ -45,10 +45,15 @@ Data-Avengers-DA-60/
 │   ├── raw/            # Source datasets (git-ignored)
 │   └── processed/      # movies_merged.csv (5,381 rows, 20 columns)
 ├── Source/
-│   ├── notebooks/      # 01–04 Jupyter notebooks
-│   └── scripts/        # helpers.py, load_data.py, clean_data.py, merge_data.py
+│   ├── notebooks/      # 01–08 Jupyter notebooks
+│   ├── scripts/        # helpers.py, load_data.py, clean_data.py, merge_data.py
+│   └── streamlit_app.py
+├── Output/
+│   ├── figures/        # PNG plots exported from notebooks
+│   ├── exports/        # JSON/CSV for Power BI, Tableau, and Streamlit
+│   └── models/         # trained model .pkl files (git-ignored)
 ├── Documentation/
-│   └── reports/        # data_overview.md, eda_summary.md, final_report.md
+│   └── reports/        # data_overview.md, eda_summary.md, final_report.md, ml_analysis.md
 ├── requirements.txt
 └── README.md
 ```
@@ -60,7 +65,22 @@ pip install -r requirements.txt
 jupyter lab
 ```
 
-Run notebooks in order: `01 → 02 → 03 → 04`
+Run notebooks in order: `01 → 02 → 03 → 04 → 05 → 06 → 07 → 08`
+
+After running each notebook, execute the **Export** cell at the bottom to generate `Output/figures/` and `Output/exports/`.
+
+## Streamlit Dashboard
+
+```bash
+streamlit run Source/streamlit_app.py
+```
+
+Five pages:
+- **Overview** — key findings and ML summary table
+- **EDA** — interactive budget/revenue/ROI/genre/decade charts
+- **ML Regression** — feature importance, actual vs predicted, residual analysis
+- **ML Classification** — ROC curve, confusion matrices, metric comparison
+- **Film Predictor** — enter budget/runtime/genre to get a revenue prediction and hit/flop probability
 
 ## System Design & Workflow
 
@@ -69,14 +89,16 @@ Run notebooks in order: `01 → 02 → 03 → 04`
 3. **Dataset Merge** — `merge_data.py`: IMDb join via imdb_id (99.96%), RT join via normalized title (81.3%)
 4. **Exploratory Data Analysis** — `03_eda.ipynb`: 11 plots, correlations, ROI by tier, decade trends
 5. **Final Visualization** — `04_final_analysis.ipynb`: 4 key findings + conclusion
-7. **Reporting** — `Documentation/reports/final_report.md`
+6. **Machine Learning** — `05_ml_preprocessing.ipynb`: feature engineering, encoding, train/test split; `06_ml_models.ipynb`: Linear Regression (R²=0.531) vs Random Forest Regressor (R²=0.542); `07_ml_final.ipynb`: cross-validation, residual analysis; `08_classification.ipynb`: binary hit/flop classification, Logistic Regression AUC-ROC=0.860
+7. **Reporting** — `Documentation/reports/final_report.md`, `Documentation/reports/ml_analysis.md`
 
 ## Documentation
 
 - `Documentation/reports/problem_analysis.md` — problem definition, research questions, and scope
-- `Documentation/reports/data_overview.md` — dataset inspection findings
+- `Documentation/reports/data_overview.md` — dataset inspection findings and full column lineage
 - `Documentation/reports/eda_summary.md` — EDA key numbers and interpretations
 - `Documentation/reports/final_report.md` — complete project report
+- `Documentation/reports/ml_analysis.md` — detailed ML analysis: regression, classification, cross-validation, residual analysis
 
 ## Dataset Sources
 

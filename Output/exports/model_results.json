@@ -1,0 +1,50 @@
+{
+  "regression": {
+    "linear_regression": {
+      "model": "Linear Regression",
+      "MAE_M": 62.04045610155029,
+      "RMSE_M": 123.5324158911278,
+      "R2": 0.5312921864083724,
+      "type": "regression",
+      "cv_r2_mean": -8.481006560727629e+23,
+      "cv_r2_std": 1.6962013121455258e+24
+    },
+    "random_forest": {
+      "model": "Random Forest",
+      "MAE_M": 60.779688632288625,
+      "RMSE_M": 122.12640952251894,
+      "R2": 0.5419008330162852,
+      "type": "regression",
+      "cv_r2_mean": 0.4983,
+      "cv_r2_std": 0.0775
+    },
+    "residual_analysis": {
+      "mean_M": 1.01,
+      "std_M": 122.18,
+      "skewness": 4.839,
+      "max_underprediction_M": 1876.2,
+      "max_overprediction_M": -571.4
+    }
+  },
+  "classification": {
+    "median_threshold_USD": 30000000.0,
+    "logistic_regression": {
+      "Model": "Logistic Regression",
+      "Accuracy": 0.7728,
+      "F1": 0.7495,
+      "AUC-ROC": 0.8604,
+      "type": "classification",
+      "cv_auc_mean": 0.8459,
+      "cv_auc_std": 0.0132
+    },
+    "random_forest": {
+      "Model": "Random Forest",
+      "Accuracy": 0.7458,
+      "F1": 0.7367,
+      "AUC-ROC": 0.8281,
+      "type": "classification",
+      "cv_auc_mean": 0.8298,
+      "cv_auc_std": 0.0154
+    }
+  }
+}

@@ -48,7 +48,13 @@ Data/processed/*
 !Data/raw/.gitignore
 !Data/processed/.gitignore
 
-# Common data analysis outputs
+# Output folder — figures and exports are tracked, models are not
+Output/models/*
+!Output/models/.gitkeep
+!Output/figures/
+!Output/exports/
+
+# Common data analysis outputs (raw/processed only)
 *.csv
 *.tsv
 *.xlsx
@@ -57,3 +63,7 @@ Data/processed/*
 *.feather
 *.pkl
 *.joblib
+
+# Allow summary exports in Output/
+!Output/exports/*.csv
+!Output/exports/*.json

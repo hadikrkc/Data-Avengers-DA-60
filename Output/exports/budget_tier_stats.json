@@ -1,0 +1,34 @@
+[
+  {
+    "budget_tier": "Low",
+    "count": 1346,
+    "median_budget": 2000000.0,
+    "median_revenue": 4268609.0,
+    "median_roi": 180.0,
+    "avg_imdb": 6.67
+  },
+  {
+    "budget_tier": "Mid",
+    "count": 1393,
+    "median_budget": 10500000.0,
+    "median_revenue": 18197398.0,
+    "median_roi": 82.02,
+    "avg_imdb": 6.52
+  },
+  {
+    "budget_tier": "High",
+    "count": 1392,
+    "median_budget": 26000000.0,
+    "median_revenue": 44982015.5,
+    "median_roi": 69.04,
+    "avg_imdb": 6.38
+  },
+  {
+    "budget_tier": "Blockbuster",
+    "count": 1250,
+    "median_budget": 72250000.0,
+    "median_revenue": 162947529.0,
+    "median_roi": 116.34,
+    "avg_imdb": 6.46
+  }
+]
