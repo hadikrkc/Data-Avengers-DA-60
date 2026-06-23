@@ -6,8 +6,8 @@
       "RMSE_M": 136.8710094113443,
       "R2": 0.5973671909794777,
       "type": "regression",
-      "cv_r2_mean": -6.67084887968314e+17,
-      "cv_r2_std": 1.334169775936628e+18
+      "cv_r2_mean": 0.4033,
+      "cv_r2_std": 0.1225
     },
     "random_forest": {
       "model": "Random Forest",

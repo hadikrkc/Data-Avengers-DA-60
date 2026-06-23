@@ -124,50 +124,50 @@ Highest-budget genres: Animation ($59.5M median), Adventure ($40M), Family ($35M
 
 ### Model Comparison
 
-| Model | MAE | RMSE | R² (test) | CV R² |
+| Model | MAE | RMSE | R² (test) | CV R² (train) |
 |---|---|---|---|---|
-| Linear Regression | $63.6M | $117.5M | **0.526** | **0.547 ± 0.022** |
-| Random Forest | $64.4M | $120.7M | 0.500 | 0.536 ± 0.040 |
+| Linear Regression | $68.7M | $136.9M | **0.597** | re-run nb07 after fix |
+| Random Forest | $73.5M | $137.6M | 0.593 | 0.369 ± 0.131 |
 
-**Key result:** After data cleaning, Linear Regression is the clear winner on both the test set and cross-validation. RF no longer outperforms LR on any metric. LR CV standard deviation dropped from ±0.047 to ±0.022 — the model is substantially more stable. This confirms that the underlying relationship is linear (EDA r = 0.65) and that the dirty data records were introducing noise that Random Forest partially over-fit to.
+**Key result:** With chronological split (pre-2010 train / 2010+ test), both models achieve R² ≈ 0.60 — higher than the previous random-split result (0.53). Linear Regression edges out Random Forest on the test set. RMSE is higher in absolute terms ($137M vs $117M before) because 2010+ films have higher revenues on average — the model is being tested on a harder distribution. LR CV had numerical instability (Pipeline fix applied in notebook 07; re-run needed for final CV values).
 
 ### Feature Importance (Random Forest)
 
 | Feature | Importance |
 |---|---|
-| `budget` | **63.6%** |
-| `runtime` | 16.1% |
-| `release_year` | 9.5% |
-| All genres + decades | ~10.8% combined |
+| `budget` | **56.6%** |
+| `runtime` | 21.6% |
+| `release_year` | 10.9% |
+| All genres combined | ~11.0% |
 
-Budget alone accounts for nearly two-thirds of the model's predictive power, confirming the EDA correlation finding from the ML angle.
+Budget remains the dominant predictor. Runtime's importance increased (21.6% vs 16.1%) after removing `decade` dummies, which were absorbing some temporal variance previously.
 
 ### Residual Analysis
 
-- Mean residual: +$1.0M (model is essentially unbiased)
-- Residual std: $122.2M
-- Residual skew: **4.84** (strong right skew — model underestimates blockbusters)
-- Maximum underprediction: $1,876M
+- Mean residual: +$3.8M (near-zero — model is approximately unbiased)
+- Residual std: $137.6M
+- Residual skew: **2.13** (much lower than before — 2010+ test set has fewer ultra-outliers)
+- Maximum underprediction: $1,109M
 
 The model struggles most with extreme blockbusters. A log-transformed target would reduce this skew.
 
 ### Classification Results — Hit / Flop Prediction
 
-**Task:** Predict whether a film earns above (hit) or below (flop) the dataset median revenue ($30M)  
-**Label construction:** `hit = 1` if revenue > $30M median, `flop = 0` otherwise — balanced 50/50 split  
-**Dataset:** 5,368 films → 4,294 train / 1,074 test (stratified 80/20, random_state=42)  
-**Features:** Same 32 features as regression (no post-release data used)
+**Task:** Predict whether a film earns above (hit) or below (flop) the training-set median revenue  
+**Label construction:** `hit = 1` if revenue > training-set median ($29.2M), `flop = 0` otherwise  
+**Dataset:** 5,268 films → chronological split: 3,664 train (pre-2010) / 1,604 test (2010+)  
+**Features:** `budget`, `runtime`, `release_year`, `primary_genre` (same as regression, no `decade`)
 
-| Model | Accuracy | F1 | AUC-ROC |
-|---|---|---|---|
-| Logistic Regression | **0.773** | **0.750** | **0.860** |
-| Random Forest Classifier | 0.746 | 0.737 | 0.828 |
+| Model | Accuracy | F1 | AUC-ROC | CV AUC |
+|---|---|---|---|---|
+| Logistic Regression | **0.787** | **0.793** | **0.874** | 0.818 ± 0.040 |
+| Random Forest Classifier | 0.771 | 0.779 | 0.850 | 0.783 ± 0.012 |
 
-**Key result:** Logistic Regression outperforms Random Forest on all three metrics — again mirroring the regression finding. The predominantly linear relationship in the data means the simpler model generalizes better.
+**Key result:** Logistic Regression outperforms Random Forest on all metrics — mirroring the regression finding. Chronological split yields better metrics than the previous random split (LR AUC: 0.874 vs 0.860 before), suggesting the pre-2010 training data captures budget→revenue patterns that generalize well to 2010+ films.
 
-**Feature importance (RF Classifier):** `budget` = 47.2% — dominant, consistent with regression.
+**Profitability threshold (revenue > budget):** LR Accuracy 0.690, AUC-ROC 0.652. Predicting break-even is harder than predicting median-outperformance — budget alone is less predictive of whether a film recoups its cost.
 
-**Regression → Classification bridge:** Applying the $30M threshold to the regression model's revenue predictions yields comparable accuracy. A single regression model therefore serves double duty: it provides an exact revenue estimate *and* a hit/flop label without requiring a separate classifier.
+**Regression → Classification bridge:** Applying the training median threshold to the regression model's revenue predictions yields comparable accuracy. A single regression model therefore serves double duty: it provides an exact revenue estimate *and* a hit/flop label without requiring a separate classifier.
 
 ---
 
