@@ -2,7 +2,7 @@
 
 **Team:** Data Avengers — DA-60  
 **Research Question:** Does a bigger budget lead to better ratings and stronger box office results?  
-**Dataset:** 5,381 films · 4 sources merged · 20 features  
+**Dataset:** 5,280 films · 4 sources merged · 20 features  
 **ML Deadline:** 11 July 2026
 
 ---
@@ -28,12 +28,23 @@ We also trained machine learning models to predict revenue from budget and other
 
 | Dataset | Rows | Key Contribution |
 |---|---|---|
-| The Movies Dataset (Kaggle) | 45,466 → **5,381** usable | Budget, revenue, genres, imdb_id |
+| The Movies Dataset (Kaggle) | 45,466 → **5,280** usable | Budget, revenue, genres, imdb_id |
 | TMDB 5000 Movies | 4,803 | Supplementary popularity score |
 | IMDb title.ratings.tsv | 1,666,284 | IMDb rating (99.96% fill) |
 | Rotten Tomatoes | 17,712 | Tomatometer (81.3% fill) |
 
-**Usability filter:** Films with budget = 0 or revenue = 0 were excluded (data entry artifact, not true zero-budget productions).
+**Usability filter:** Films with budget < $10,000 or revenue < $10,000 were excluded. Values below this threshold are data entry errors (budget stored as $1 or $100 instead of $1M), not real sub-$10K productions. This removed 101 records from the original 5,381 films.
+
+| | Before cleaning | After cleaning |
+|---|---|---|
+| Films | 5,381 | **5,280** |
+| r budget→revenue | 0.704 | **0.650** |
+| r budget→IMDb | -0.079 | **-0.094** |
+| r budget→Tomatometer | -0.176 | **-0.221** |
+| Low tier median ROI | 180% | **189%** |
+| RF MAPE | ~135,000% | **2,848%** |
+
+The direction of all findings is unchanged. The MAPE reduction (135,000% → 2,848%) is the largest practical gain — previously, films with revenue = $100 inflated percentage errors to meaningless levels.
 
 ### Cleaning Decisions
 
@@ -47,27 +58,27 @@ We also trained machine learning models to predict revenue from budget and other
 
 ### Final Dataset
 
-- **Rows:** 5,381 films
+- **Rows:** 5,280 films
 - **Columns:** 20 (including derived: roi, budget_tier, decade, primary_genre)
-- **Budget range:** $1 → $380M (median $17M)
-- **Revenue range:** $1 → $2.79B (median $30M)
-- **IMDb coverage:** 5,379 / 5,381 (99.96%)
-- **Tomatometer coverage:** 4,376 / 5,381 (81.3%)
+- **Budget range:** $10,000 → $380M (median $17M)
+- **Revenue range:** $10,000 → $2.79B (median $31M)
+- **IMDb coverage:** 5,278 / 5,280 (99.96%)
+- **Tomatometer coverage:** 4,326 / 5,280 (81.9%)
 
 ---
 
 ## 3. Key Findings
 
-### Finding 1 — Budget Predicts Revenue (r = 0.70)
+### Finding 1 — Budget Predicts Revenue (r = 0.65)
 
-The strongest signal in the dataset. Pearson r = **0.704** on log-log scale (p ≈ 0); r² ≈ 0.50 — budget explains approximately half of revenue variance. Higher budget reliably predicts higher revenue, but scatter is wide: the same Blockbuster budget can produce anywhere from $30M to $2.79B in revenue. **Budget is a necessary but not sufficient condition for box office success.**
+The strongest signal in the dataset. Pearson r = **0.650** on log-log scale (p ≈ 0); r² ≈ 0.42 — budget explains approximately 42% of revenue variance. Higher budget reliably predicts higher revenue, but scatter is wide: the same Blockbuster budget can produce anywhere from $31M to $2.79B in revenue. **Budget is a necessary but not sufficient condition for box office success.**
 
 ### Finding 2 — Budget Does Not Predict Quality
 
 | Metric | Pearson r | Practical interpretation |
 |---|---|---|
-| Budget vs IMDb rating | **-0.057** | Near-zero: no relationship |
-| Budget vs Tomatometer | **-0.176** | Slight negative: more budget = marginally lower critic scores |
+| Budget vs IMDb rating | **-0.094** | Near-zero: no meaningful relationship |
+| Budget vs Tomatometer | **-0.221** | Moderate negative: more budget = lower critic scores |
 
 Budget explains less than 0.3% of IMDb score variance. Higher-budget films score slightly lower with critics, likely because large studios favor commercial safety over creative risk.
 
@@ -75,9 +86,9 @@ Budget explains less than 0.3% of IMDb score variance. Higher-budget films score
 
 | Tier | Median ROI | Avg IMDb |
 |---|---|---|
-| **Low** | **180%** | **6.67** |
-| Mid | 82% | 6.52 |
-| High | 69% | 6.38 |
+| **Low** | **189%** | **6.67** |
+| Mid | 80% | 6.52 |
+| High | 70% | 6.38 |
 | Blockbuster | 116% | 6.46 |
 
 Low-budget films are the most efficient investment by ROI and score highest with audiences. The Mid–High range ($20M–$80M) carries the highest financial risk with no quality advantage.
@@ -107,17 +118,17 @@ Highest-budget genres: Animation ($59.5M median), Adventure ($40M), Family ($35M
 ## 4. Machine Learning Results
 
 **Task:** Predict revenue from pre-release features (budget, runtime, release_year, primary_genre, decade)  
-**Dataset:** 5,368 films → 4,294 train / 1,074 test (80/20, random_state=42)  
+**Dataset:** 5,267 films → 4,214 train / 1,054 test (80/20, random_state=42)  
 **Features:** 32 (3 numeric + 29 one-hot encoded)
 
 ### Model Comparison
 
 | Model | MAE | RMSE | R² (test) | CV R² |
 |---|---|---|---|---|
-| Linear Regression | $62.0M | $123.5M | 0.531 | **0.536 ± 0.047** |
-| Random Forest | $60.8M | $122.1M | **0.542** | 0.498 ± 0.078 |
+| Linear Regression | $63.6M | $117.5M | **0.526** | **0.547 ± 0.022** |
+| Random Forest | $64.4M | $120.7M | 0.500 | 0.536 ± 0.040 |
 
-**Key result:** Both models perform similarly. Random Forest wins on the single test split (R² +0.011), but Linear Regression wins on 5-fold cross-validation (R² +0.038) with lower variance. RF shows mild overfitting — unsurprising given that the underlying relationship is largely linear (EDA r = 0.70).
+**Key result:** After data cleaning, Linear Regression is the clear winner on both the test set and cross-validation. RF no longer outperforms LR on any metric. LR CV standard deviation dropped from ±0.047 to ±0.022 — the model is substantially more stable. This confirms that the underlying relationship is linear (EDA r = 0.65) and that the dirty data records were introducing noise that Random Forest partially over-fit to.
 
 ### Feature Importance (Random Forest)
 
@@ -163,10 +174,10 @@ The model struggles most with extreme blockbusters. A log-transformed target wou
 
 | Dimension | Answer |
 |---|---|
-| **Box office revenue** | **Yes** — strong correlation (r = 0.70, r² ≈ 0.50) |
-| **Audience rating (IMDb)** | **No** — near-zero correlation (r = -0.057) |
-| **Critic score (Tomatometer)** | **Slightly negative** — more budget correlates with lower scores |
-| **Return on investment** | **Counterintuitively no** — Low tier delivers best ROI (180%) |
+| **Box office revenue** | **Yes** — strong correlation (r = 0.65, r² ≈ 0.42) |
+| **Audience rating (IMDb)** | **No** — near-zero correlation (r = -0.094) |
+| **Critic score (Tomatometer)** | **Negative** — more budget correlates with lower critic scores (r = -0.221) |
+| **Return on investment** | **Counterintuitively no** — Low tier delivers best ROI (189%) |
 
 **Overall:** A high budget increases the *scale* of a film's release and its expected revenue, but has no positive effect on quality perception and actually produces worse ROI than low-budget filmmaking. The most profitable strategy by ROI is low-budget genre production (particularly Horror); the most reliable large-scale strategy is franchise-driven Blockbuster production. The mid-range ($20M–$80M) carries the highest financial risk with no distinct quality or ROI advantage.
 
@@ -174,7 +185,7 @@ The model struggles most with extreme blockbusters. A log-transformed target wou
 
 ## 6. Limitations
 
-- Dataset only includes films with reported budget > 0 and revenue > 0 — films without public financial data are excluded (selection bias toward mainstream productions)
+- Dataset only includes films with budget ≥ $10,000 and revenue ≥ $10,000 — films without public financial data and records with data entry errors are excluded (selection bias toward mainstream productions)
 - Marketing spend, cast, director track record, and release timing are absent from the data — these likely explain a significant portion of the unexplained ~46% revenue variance
 - Rotten Tomatoes join via normalized title produced 81.3% coverage — 18.7% of films lack a critic score
 - The ML models underpredict extreme blockbusters; log-transforming revenue would improve performance

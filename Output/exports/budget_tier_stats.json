@@ -1,26 +1,26 @@
 [
   {
     "budget_tier": "Low",
-    "count": 1346,
-    "median_budget": 2000000.0,
-    "median_revenue": 4268609.0,
-    "median_roi": 180.0,
-    "avg_imdb": 6.67
+    "count": 1419,
+    "median_budget": 2500000.0,
+    "median_revenue": 5585154.0,
+    "median_roi": 188.71,
+    "avg_imdb": 6.7
   },
   {
     "budget_tier": "Mid",
-    "count": 1393,
-    "median_budget": 10500000.0,
-    "median_revenue": 18197398.0,
-    "median_roi": 82.02,
-    "avg_imdb": 6.52
+    "count": 1221,
+    "median_budget": 11500000.0,
+    "median_revenue": 19158074.0,
+    "median_roi": 80.04,
+    "avg_imdb": 6.51
   },
   {
     "budget_tier": "High",
-    "count": 1392,
+    "count": 1390,
     "median_budget": 26000000.0,
-    "median_revenue": 44982015.5,
-    "median_roi": 69.04,
+    "median_revenue": 45146657.0,
+    "median_roi": 69.92,
     "avg_imdb": 6.38
   },
   {

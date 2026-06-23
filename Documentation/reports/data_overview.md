@@ -4,12 +4,13 @@
 
 | Source | File | Total Rows | Usable Rows* | Join Key |
 |---|---|---|---|---|
-| The Movies Dataset (Kaggle) | movies_metadata.csv | 45,466 | 5,381 | imdb_id (primary key) |
+| The Movies Dataset (Kaggle) | movies_metadata.csv | 45,466 | 5,280 | imdb_id (primary key) |
 | TMDB 5000 Movies Dataset | tmdb_5000_movies.csv | 4,803 | 3,229 | title (normalized) |
 | IMDb Dataset | title.ratings.tsv | 1,666,284 | all | tconst = imdb_id |
 | Rotten Tomatoes | rotten_tomatoes_movies.csv | 17,712 | all | movie_title (normalized) |
 
-*Usable = budget > 0 AND revenue > 0
+*Usable = budget ≥ $10,000 AND revenue ≥ $10,000. Values below $10K are data entry errors
+(e.g. budget recorded as $1 or $100 instead of $1M). 101 rows removed vs the previous > 0 threshold.
 
 ---
 
@@ -52,7 +53,7 @@
 
 ## Key Observations
 
-- **Primary dataset size:** After filtering zero-budget/revenue rows, movies_metadata provides **5,381** usable films.
+- **Primary dataset size:** After filtering rows with budget or revenue below $10,000, movies_metadata provides **5,280** usable films (101 rows removed as data entry errors).
 - **IMDb join reliability:** `imdb_id` in movies_metadata uses the same `tt` prefix format as IMDb's `tconst` — direct join is safe.
 - **RT join:** Done via normalized title (`movie_title` column). Some mismatches expected due to punctuation or subtitle differences.
 - **Rating coverage:** IMDb ratings are highly complete for films with a valid `imdb_id`. RT tomatometer is nearly complete (0.2% null).

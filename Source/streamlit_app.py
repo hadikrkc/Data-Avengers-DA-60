@@ -73,6 +73,7 @@ pages = [
     '🤖 ML — Regression',
     '🏷️ ML — Classification',
     '🎬 Film Predictor',
+    '🔬 Data Distributions',
     '📁 Dataset',
 ]
 page = st.sidebar.radio('Navigate', pages)
@@ -540,7 +541,306 @@ elif page == '🎬 Film Predictor':
             st.info('Fill in the film details and click **Predict**.')
 
 # ══════════════════════════════════════════════════════════════════════════════
-# PAGE 6 — Dataset
+# PAGE 6 — Data Distributions
+# ══════════════════════════════════════════════════════════════════════════════
+elif page == '🔬 Data Distributions':
+    st.title('Data Quality & Distributions')
+    st.markdown(
+        'Understanding the shape and limitations of the dataset is essential for interpreting results correctly. '
+        'Skewed distributions, small sub-groups, and temporal gaps all affect what conclusions can be drawn.'
+    )
+
+    df = load_df()
+    if df is None:
+        st.error('Dataset not found. Run notebook `02_cleaning_and_merge.ipynb` first.')
+        st.stop()
+
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+        'Genre', 'Decade', 'Budget & Revenue', 'Ratings & ROI', 'Data Quality'
+    ])
+
+    # ── TAB 1: Genre ──────────────────────────────────────────────────────────
+    with tab1:
+        st.subheader('Genre Distribution')
+
+        genre_counts = df['primary_genre'].value_counts().reset_index()
+        genre_counts.columns = ['genre', 'count']
+        genre_counts['pct'] = (genre_counts['count'] / len(df) * 100).round(1)
+
+        fig = px.bar(
+            genre_counts, x='count', y='genre', orientation='h',
+            text='pct',
+            labels={'count': 'Number of Films', 'genre': 'Genre'},
+            title='Films by Genre',
+            color='count', color_continuous_scale='Blues',
+        )
+        fig.update_traces(texttemplate='%{text}%', textposition='outside')
+        fig.update_layout(yaxis={'categoryorder': 'total ascending'}, showlegend=False)
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.warning(
+            '**Imbalance warning:** Drama (24.5%), Comedy (19.8%), Action (17.9%) make up **62%** of the dataset. '
+            'Genre-level findings are effectively findings about these three genres. '
+            '`Foreign` (4 films) and `TV Movie` (1 film) have insufficient data for any statistical conclusion.'
+        )
+
+        st.markdown('---')
+        st.subheader('Median Budget & Revenue by Genre')
+
+        genre_stats = df.groupby('primary_genre', observed=True).agg(
+            count=('title', 'count'),
+            median_budget=('budget', 'median'),
+            median_revenue=('revenue', 'median'),
+        ).reset_index()
+        genre_stats['median_budget_M'] = (genre_stats['median_budget'] / 1e6).round(1)
+        genre_stats['median_revenue_M'] = (genre_stats['median_revenue'] / 1e6).round(1)
+        genre_stats = genre_stats.sort_values('median_budget_M', ascending=False)
+
+        fig2 = go.Figure()
+        fig2.add_trace(go.Bar(
+            name='Median Budget (M USD)', x=genre_stats['primary_genre'],
+            y=genre_stats['median_budget_M'], marker_color='steelblue'
+        ))
+        fig2.add_trace(go.Bar(
+            name='Median Revenue (M USD)', x=genre_stats['primary_genre'],
+            y=genre_stats['median_revenue_M'], marker_color='coral'
+        ))
+        fig2.update_layout(
+            barmode='group', title='Median Budget vs Revenue by Genre',
+            xaxis_title='Genre', yaxis_title='Million USD',
+            xaxis_tickangle=-40,
+        )
+        st.plotly_chart(fig2, use_container_width=True)
+
+        st.markdown('---')
+        st.subheader('Genre × Budget Tier (% within genre)')
+        cross = pd.crosstab(df['primary_genre'], df['budget_tier'], normalize='index') * 100
+        cross = cross.reindex(columns=['Low', 'Mid', 'High', 'Blockbuster'], fill_value=0).round(1)
+        top_genres = df['primary_genre'].value_counts().head(12).index
+        cross_top = cross.loc[cross.index.isin(top_genres)]
+
+        fig3 = px.imshow(
+            cross_top,
+            text_auto='.1f',
+            color_continuous_scale='Blues',
+            labels={'color': '% of genre'},
+            title='Budget Tier Distribution Within Each Genre (%)',
+        )
+        fig3.update_layout(xaxis_title='Budget Tier', yaxis_title='Genre')
+        st.plotly_chart(fig3, use_container_width=True)
+        st.caption('Animation: 57.5% Blockbuster. Horror: 44.0% Low budget. Values show % of films in that genre falling into each tier.')
+
+    # ── TAB 2: Decade ─────────────────────────────────────────────────────────
+    with tab2:
+        st.subheader('Films by Decade')
+
+        decade_counts = df['decade'].value_counts().sort_index().reset_index()
+        decade_counts.columns = ['decade', 'count']
+
+        fig = px.bar(
+            decade_counts, x='decade', y='count',
+            labels={'decade': 'Decade', 'count': 'Number of Films'},
+            title='Film Count by Decade',
+            color='count', color_continuous_scale='Teal',
+            text='count',
+        )
+        fig.update_traces(textposition='outside')
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.warning(
+            '**Temporal skew:** 2000s (33.1%) and 2010s (30.5%) account for **63.6%** of the dataset. '
+            'Pre-1960 films total only 179 (3.3%). **Dataset cuts off at 2017** — no 2018+ films exist in the data.'
+        )
+        st.info(
+            '**Survival bias (pre-1960):** Films from the 1950s–1960s have the highest average IMDb scores (7.23–7.24), '
+            'but these are based on 75–130 films. Only films memorable enough to be catalogued and rated survived. '
+            'This reflects selection, not overall era quality.'
+        )
+
+        st.markdown('---')
+        st.subheader('Quality & ROI Trend by Decade')
+
+        decade_stats = df[df['decade'].isin(
+            df['decade'].value_counts()[df['decade'].value_counts() >= 50].index
+        )].groupby('decade').agg(
+            avg_imdb=('imdb_rating', 'mean'),
+            med_roi=('roi', 'median'),
+            med_budget_M=('budget', lambda x: x.median() / 1e6),
+            med_revenue_M=('revenue', lambda x: x.median() / 1e6),
+        ).reset_index()
+
+        fig2 = go.Figure()
+        fig2.add_trace(go.Scatter(
+            x=decade_stats['decade'], y=decade_stats['avg_imdb'].round(2),
+            mode='lines+markers', name='Avg IMDb', line=dict(color='mediumseagreen', width=2)
+        ))
+        fig2.update_layout(title='Average IMDb Rating by Decade (decades with ≥50 films)',
+                           xaxis_title='Decade', yaxis_title='IMDb Rating')
+        st.plotly_chart(fig2, use_container_width=True)
+        st.caption('Declining IMDb trend partly reflects recency bias: newer films have fewer votes and more polarized ratings. Pre-1960 values reflect survival bias.')
+
+    # ── TAB 3: Budget & Revenue ───────────────────────────────────────────────
+    with tab3:
+        st.subheader('Budget Distribution (log scale)')
+
+        budget_vals = np.log10(df['budget'].replace(0, np.nan).dropna())
+        fig = px.histogram(
+            x=budget_vals, nbins=60,
+            labels={'x': 'log₁₀(Budget USD)'},
+            title=f'Budget Distribution — log scale  |  skew = {df["budget"].skew():.2f}',
+            color_discrete_sequence=['steelblue'],
+        )
+        fig.update_layout(
+            xaxis=dict(tickvals=[4, 5, 6, 7, 8, 8.5],
+                       ticktext=['$10K', '$100K', '$1M', '$10M', '$100M', '$300M'])
+        )
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.subheader('Revenue Distribution (log scale)')
+        rev_vals = np.log10(df['revenue'].replace(0, np.nan).dropna())
+        fig2 = px.histogram(
+            x=rev_vals, nbins=60,
+            labels={'x': 'log₁₀(Revenue USD)'},
+            title=f'Revenue Distribution — log scale  |  skew = {df["revenue"].skew():.2f}',
+            color_discrete_sequence=['coral'],
+        )
+        fig2.update_layout(
+            xaxis=dict(tickvals=[4, 5, 6, 7, 8, 9],
+                       ticktext=['$10K', '$100K', '$1M', '$10M', '$100M', '$1B'])
+        )
+        st.plotly_chart(fig2, use_container_width=True)
+
+        col1, col2 = st.columns(2)
+        col1.metric('Budget — Median', f'${df["budget"].median()/1e6:.1f}M')
+        col1.metric('Budget — Mean', f'${df["budget"].mean()/1e6:.1f}M')
+        col1.metric('Budget — Skewness', f'{df["budget"].skew():.2f}')
+        col2.metric('Revenue — Median', f'${df["revenue"].median()/1e6:.1f}M')
+        col2.metric('Revenue — Mean', f'${df["revenue"].mean()/1e6:.1f}M')
+        col2.metric('Revenue — Skewness', f'{df["revenue"].skew():.2f}')
+
+        st.info(
+            '**Why this matters for ML:** Revenue mean ($90M) is 3× the median ($30M). '
+            'Models trained on raw dollar scale try to minimize error on blockbusters, '
+            'systematically over-predicting low-revenue films. Log transformation addresses this — '
+            'see notebook 06 Phase 8 for the corrected model.'
+        )
+
+    # ── TAB 4: Ratings & ROI ──────────────────────────────────────────────────
+    with tab4:
+        st.subheader('IMDb Rating Distribution')
+
+        fig = px.histogram(
+            df['imdb_rating'].dropna(), nbins=50,
+            labels={'value': 'IMDb Rating', 'count': 'Films'},
+            title=f'IMDb Rating Distribution  |  mean={df["imdb_rating"].mean():.2f}  median={df["imdb_rating"].median():.2f}  skew={df["imdb_rating"].skew():.2f}',
+            color_discrete_sequence=['mediumseagreen'],
+        )
+        st.plotly_chart(fig, use_container_width=True)
+        st.success(
+            '**Most reliable column:** IMDb rating is nearly normally distributed (skew = -0.66). '
+            'Null rate is 0.04%. This makes budget→quality correlations the most statistically solid finding.'
+        )
+
+        st.markdown('---')
+        st.subheader('ROI Distribution')
+
+        col_a, col_b = st.columns(2)
+        with col_a:
+            st.markdown('**Uncapped (all outliers visible)**')
+            roi_all = df['roi'].dropna()
+            fig_roi1 = px.histogram(
+                roi_all.clip(-100, 5000), nbins=80,
+                labels={'value': 'ROI (%)', 'count': 'Films'},
+                title=f'ROI — clipped view (-100% to 5000%)  |  skew={roi_all.skew():.1f}',
+                color_discrete_sequence=['slateblue'],
+            )
+            st.plotly_chart(fig_roi1, use_container_width=True)
+        with col_b:
+            st.markdown('**Capped at 500% (typical range)**')
+            roi_capped = roi_all[(roi_all >= -100) & (roi_all <= 500)]
+            fig_roi2 = px.histogram(
+                roi_capped, nbins=60,
+                labels={'value': 'ROI (%)', 'count': 'Films'},
+                title=f'ROI — capped at 500%  |  {len(roi_capped):,} of {len(roi_all):,} films',
+                color_discrete_sequence=['darkorchid'],
+            )
+            st.plotly_chart(fig_roi2, use_container_width=True)
+
+        st.warning(
+            f'**ROI skewness = {roi_all.skew():.1f}:** '
+            '44 films have ROI > 10,000% — these are films with budget recorded as $1–$100 (data entry errors). '
+            'Median ROI (106%) is the reliable metric; mean ROI is distorted by these extreme values.'
+        )
+
+    # ── TAB 5: Data Quality ───────────────────────────────────────────────────
+    with tab5:
+        st.subheader('Missing Values by Column')
+
+        null_data = df.isnull().sum().reset_index()
+        null_data.columns = ['column', 'null_count']
+        null_data['null_pct'] = (null_data['null_count'] / len(df) * 100).round(1)
+        null_data = null_data[null_data['null_count'] > 0].sort_values('null_count', ascending=False)
+
+        if len(null_data) > 0:
+            fig = px.bar(
+                null_data, x='null_pct', y='column', orientation='h',
+                text='null_pct',
+                labels={'null_pct': 'Null %', 'column': 'Column'},
+                title='Null Value Rate by Column (%)',
+                color='null_pct', color_continuous_scale='Reds',
+            )
+            fig.update_traces(texttemplate='%{text}%', textposition='outside')
+            st.plotly_chart(fig, use_container_width=True)
+            st.warning(
+                '`tomatometer_rating` and `audience_rating` are **18.7% null** — '
+                'Rotten Tomatoes join matched 81.3% of films. '
+                'Any RT-based conclusion applies only to that subset.'
+            )
+        else:
+            st.success('No missing values in this dataset.')
+
+        st.markdown('---')
+        st.subheader('Suspected Data Entry Errors')
+
+        issues = {
+            'budget < $1,000': int((df['budget'] < 1000).sum()),
+            'revenue < $1,000': int((df['revenue'] < 1000).sum()),
+            'runtime = 0 min': int((df['runtime'] == 0).sum()),
+            'runtime < 30 min': int((df['runtime'] < 30).sum()),
+            'ROI > 10,000%': int((df['roi'] > 10000).sum()),
+            'genre: Foreign (≤4 films)': int((df['primary_genre'] == 'Foreign').sum()),
+            'genre: TV Movie (1 film)': int((df['primary_genre'] == 'TV Movie').sum()),
+        }
+        issue_df = pd.DataFrame(list(issues.items()), columns=['Issue', 'Film Count'])
+        st.dataframe(issue_df, use_container_width=True, hide_index=True)
+
+        st.error(
+            '**These records were NOT removed from the analysis.** '
+            'Budget/revenue values below $1,000 are almost certainly data entry errors '
+            '(e.g., budget = $1 instead of $1,000,000), inflating ROI calculations. '
+            'A future cleaning step should filter `budget < 10,000` and `revenue < 10,000`.'
+        )
+
+        st.markdown('---')
+        st.subheader('Dataset Coverage Summary')
+        cov_data = {
+            'Metric': ['Total films', 'Year range', 'Data cutoff', 'Genres', 'Budget null', 'Revenue null', 'IMDb null', 'Tomatometer null'],
+            'Value': [
+                f'{len(df):,}',
+                f'{int(df["release_year"].min())} – {int(df["release_year"].max())}',
+                '2017 (no 2018+ films)',
+                f'{df["primary_genre"].nunique()} genres',
+                '0%',
+                '0%',
+                f'{df["imdb_rating"].isnull().mean()*100:.1f}%',
+                f'{df["tomatometer_rating"].isnull().mean()*100:.1f}%',
+            ]
+        }
+        st.table(pd.DataFrame(cov_data))
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PAGE 7 — Dataset
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == '📁 Dataset':
     st.title('Dataset — movies_merged.csv')

@@ -40,10 +40,10 @@ It would be simpler to predict just "will this be a hit or a flop?" (a binary ye
 | Property | Value |
 |---|---|
 | Source file | `movies_merged.csv` |
-| Total rows | 5,381 films |
-| Rows after removing nulls | 5,368 films |
-| Training set | 4,294 films (80%) |
-| Test set | 1,074 films (20%) |
+| Total rows | 5,280 films |
+| Rows after removing nulls | 5,267 films |
+| Training set | 4,214 films (80%) |
+| Test set | 1,054 films (20%) |
 
 ---
 
@@ -57,7 +57,7 @@ We selected five input features (columns) that are available before a film's rel
 
 | Feature | Type | Reason for Including |
 |---|---|---|
-| `budget` | Numeric | Strongest expected predictor; EDA showed r = 0.70 correlation with revenue |
+| `budget` | Numeric | Strongest expected predictor; EDA showed r = 0.65 correlation with revenue |
 | `runtime` | Numeric | Film length is a proxy for production scope and audience target |
 | `release_year` | Numeric | Accounts for inflation and the overall growth of the box office over time |
 | `primary_genre` | Categorical | Genre directly affects audience size (e.g., action vs. documentary) |
@@ -120,7 +120,7 @@ Each weight (`w1`, `w2`, etc.) tells us how much each feature contributes to the
 
 Linear Regression serves as the **baseline model**. In machine learning, it is standard practice to start with the simplest possible model before trying more complex ones. If a complex model doesn't significantly outperform a linear model, it signals one of two things:
 
-1. The underlying relationship genuinely is linear (which is actually the case here — EDA showed budget and revenue correlate linearly at r = 0.70).
+1. The underlying relationship genuinely is linear (which is actually the case here — EDA showed budget and revenue correlate linearly at r = 0.65).
 2. The complex model is overfitting rather than learning real patterns.
 
 A baseline also gives us a reference point: "is the added complexity of Random Forest actually worth it?"
@@ -142,9 +142,9 @@ A baseline also gives us a reference point: "is the added complexity of Random F
 
 | Metric | Value |
 |---|---|
-| MAE | $62.0 million |
-| RMSE | $123.5 million |
-| R² | 0.531 |
+| MAE | $63.6 million |
+| RMSE | $117.5 million |
+| R² | 0.526 |
 
 ---
 
@@ -209,9 +209,9 @@ A Random Forest trains **many trees** (we used 200), each on a different random 
 
 | Metric | Value |
 |---|---|
-| MAE | $60.8 million |
-| RMSE | $122.1 million |
-| R² | 0.542 |
+| MAE | $64.4 million |
+| RMSE | $120.7 million |
+| R² | 0.500 |
 
 ---
 
@@ -248,12 +248,12 @@ Results from the held-out test set (1,074 films the models never saw during trai
 
 | Model | MAE | RMSE | R² |
 |---|---|---|---|
-| Linear Regression | $62.0M | $123.5M | 0.531 |
-| Random Forest | $60.8M | $122.1M | **0.542** |
+| Linear Regression | $63.6M | $117.5M | **0.526** |
+| Random Forest | $64.4M | $120.7M | 0.500 |
 
-**Random Forest is the winner on the test set — but only barely.**
+**Linear Regression wins on the test set — and by a wider margin than expected.**
 
-The improvement in RMSE is only $1.4 million, a 1.1% reduction. This surprisingly small gap is not a coincidence. Our EDA had already revealed a strong *linear* correlation between budget and revenue (Pearson r = 0.70). When the underlying relationship is largely linear, the added complexity of Random Forest (its ability to model curves and interactions) provides minimal benefit — Linear Regression already captures most of the signal.
+After removing data entry error records (budget/revenue < $10,000), Linear Regression outperforms Random Forest on all metrics. RMSE is $3.2M lower (2.7% improvement). This is consistent with the EDA finding (Pearson r = 0.65): the underlying relationship is predominantly linear. Random Forest's additional complexity was partially fitting noise introduced by the malformed records.
 
 ### What Does R² = 0.54 Mean in Practice?
 
@@ -287,12 +287,12 @@ The test set results above are based on a single random split of the data. A dif
 
 | Model | CV R² (mean) | CV R² (std dev) |
 |---|---|---|
-| Linear Regression | 0.536 | ± 0.047 |
-| Random Forest | 0.498 | ± 0.078 |
+| Linear Regression | **0.547** | **± 0.022** |
+| Random Forest | 0.536 | ± 0.040 |
 
-> **This is the key finding that reverses the ranking.**
+> **Cross-validation confirms Linear Regression as the superior model on the cleaned dataset.**
 
-On the test set, Random Forest appeared slightly better (R² 0.542 vs 0.531). But cross-validation tells a different story: **Linear Regression generalizes more reliably** (0.536 ± 0.047) than Random Forest (0.498 ± 0.078).
+Linear Regression leads on both the test set and CV. More importantly, its CV standard deviation dropped from ±0.047 (uncleaned) to ±0.022 — the model is substantially more stable. Random Forest's CV R² also improved (0.498 → 0.536) but remains below Linear Regression on both metrics.
 
 The lower CV R² for Random Forest, combined with its higher standard deviation, is a classic sign of **mild overfitting** — the model is learning some noise in the training data that does not generalize to new films.
 
@@ -499,13 +499,13 @@ We trained and compared two machine learning models to predict movie box office 
 
 | Question | Answer |
 |---|---|
-| Which model performed better on test data? | Random Forest (R² = 0.542) — marginally |
-| Which model generalizes more reliably? | Linear Regression (CV R² = 0.536 ± 0.047) |
+| Which model performed better on test data? | Linear Regression (R² = 0.526 vs RF 0.500) |
+| Which model generalizes more reliably? | Linear Regression (CV R² = 0.547 ± 0.022 vs RF 0.536 ± 0.040) |
 | What is the single most important predictor? | `budget` — 63.6% of feature importance |
-| How accurate are the predictions? | On average ±$62M; large blockbusters can be off by billions |
-| How much variance is explained? | ~54%; the remaining ~46% comes from unobserved factors |
+| How accurate are the predictions? | On average ±$64M; large blockbusters can be off by billions |
+| How much variance is explained? | ~53% (LR); the remaining ~47% comes from unobserved factors |
 
-**The core finding:** Budget dominates. A film's production budget is, by far, the single strongest predictor of its box office revenue — more important than genre, runtime, or release era combined. This conclusion, already visible in the EDA correlation analysis (r = 0.70), is independently confirmed and quantified by the machine learning models.
+**The core finding:** Budget dominates. A film's production budget is, by far, the single strongest predictor of its box office revenue — more important than genre, runtime, or release era combined. This conclusion, already visible in the EDA correlation analysis (r = 0.65), is independently confirmed and quantified by the machine learning models.
 
 **The model's honest boundary:** R² ≈ 0.54 means our features explain roughly half of what drives revenue. The other half — marketing, cast, cultural timing, word of mouth — is real and important, but it requires richer data sources to capture.
 

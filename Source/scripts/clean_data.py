@@ -18,12 +18,22 @@ def coerce_numeric(series: pd.Series) -> pd.Series:
     return pd.to_numeric(series, errors="coerce")
 
 
+MIN_FINANCIAL_VALUE = 10_000  # Values below this are data entry errors (e.g. budget stored as $1 instead of $1M)
+
 def filter_positive_budget_revenue(df: pd.DataFrame, budget_col: str, revenue_col: str) -> pd.DataFrame:
-    """Keep rows with usable budget and revenue values."""
+    """Keep rows with usable budget and revenue values.
+
+    Threshold is $10,000: values below this are almost certainly data entry errors
+    (budget/revenue recorded in thousands or as placeholder $1 values), not real
+    productions with sub-$10K financials.
+    """
     cleaned = df.copy()
     cleaned[budget_col] = coerce_numeric(cleaned[budget_col])
     cleaned[revenue_col] = coerce_numeric(cleaned[revenue_col])
-    return cleaned[(cleaned[budget_col] > 0) & (cleaned[revenue_col] > 0)]
+    return cleaned[
+        (cleaned[budget_col] >= MIN_FINANCIAL_VALUE) &
+        (cleaned[revenue_col] >= MIN_FINANCIAL_VALUE)
+    ]
 
 
 def extract_year(series: pd.Series) -> pd.Series:
