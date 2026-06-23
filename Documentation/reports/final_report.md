@@ -126,10 +126,10 @@ Highest-budget genres: Animation ($59.5M median), Adventure ($40M), Family ($35M
 
 | Model | MAE | RMSE | R² (test) | CV R² (train) |
 |---|---|---|---|---|
-| Linear Regression | $68.7M | $136.9M | **0.597** | re-run nb07 after fix |
+| Linear Regression | $68.7M | $136.9M | **0.597** | 0.403 ± 0.123 |
 | Random Forest | $73.5M | $137.6M | 0.593 | 0.369 ± 0.131 |
 
-**Key result:** With chronological split (pre-2010 train / 2010+ test), both models achieve R² ≈ 0.60 — higher than the previous random-split result (0.53). Linear Regression edges out Random Forest on the test set. RMSE is higher in absolute terms ($137M vs $117M before) because 2010+ films have higher revenues on average — the model is being tested on a harder distribution. LR CV had numerical instability (Pipeline fix applied in notebook 07; re-run needed for final CV values).
+**Key result:** With chronological split (pre-2010 train / 2010+ test), both models achieve R² ≈ 0.60 — higher than the previous random-split result (0.53). Linear Regression edges out Random Forest on the test set. RMSE is higher in absolute terms ($137M vs $117M before) because 2010+ films have higher revenues on average — the model is being tested on a harder distribution. LR CV R² = 0.403 ± 0.123 (Pipeline fix applied — scaling within each fold via sklearn Pipeline prevents numerical overflow).
 
 ### Feature Importance (Random Forest)
 
@@ -187,19 +187,38 @@ The model struggles most with extreme blockbusters. A log-transformed target wou
 ## 6. Limitations
 
 - Dataset only includes films with budget ≥ $10,000 and revenue ≥ $10,000 — films without public financial data and records with data entry errors are excluded (selection bias toward mainstream productions)
+- Dataset coverage ends at 2017 — post-2017 streaming economics, franchise dominance, and the COVID-19 box office collapse (2020–2021) are not reflected
 - Marketing spend, cast, director track record, and release timing are absent from the data — these likely explain a significant portion of the unexplained ~46% revenue variance
 - Rotten Tomatoes join via normalized title produced 81.3% coverage — 18.7% of films lack a critic score
-- The ML models underpredict extreme blockbusters; log-transforming revenue would improve performance
+- Budget and revenue figures are not inflation-adjusted — a $50M budget in 1995 has a different real value than $50M in 2015, which affects decade-trend comparisons
+- ML models underpredict extreme blockbusters (max underprediction: $1,109M); the right-skewed revenue distribution limits accuracy at the high end even with log-transformation
 
 ---
 
 ## 7. Recommendations & Future Work
 
-- **Log-transform revenue** for ML: reduces right-skew in residuals, likely improves R² by 5–10 points
-- **Add marketing spend** as a feature: likely the single biggest missing variable
-- **Classification variant (completed):** hit/flop prediction implemented in `08_classification.ipynb` using two thresholds: median revenue (balanced 50/50 split) and **revenue > budget** (profitability, implemented in Phase 10D)
-- **Sentiment analysis** on film overviews/trailers: proxy for story quality
-- **Director/cast historical performance**: proxy for creative execution quality
+### Completed Improvements
+- **Log-transform revenue** *(implemented)*: RF model trained on `log1p(revenue)` with `expm1()` back-transform — reduces residual skew from 4.84 to 2.13
+- **Chronological train/test split** *(implemented)*: pre-2010 train / 2010+ test eliminates future-data leakage — R² improved from 0.531 to 0.597
+- **Profitability classification** *(implemented)*: second threshold `revenue > budget` added alongside median threshold in `08_classification.ipynb` — LR AUC 0.652
+
+### Near-Term Improvements (Faz 2)
+
+- **Inflation adjustment**: Apply CPI multipliers (2000 base year) to convert nominal budget/revenue to real values. A $50M budget in 1990 ≈ $98M in 2017 dollars. This would make decade-trend comparisons significantly more reliable and is straightforward to implement with a lookup table.
+
+- **Interaction features**: Add derived features such as `budget_per_minute` (production intensity) and genre × budget tier combinations. These may expose non-linear patterns that neither budget nor genre alone captures, and could shift feature importance away from the dominant `budget` signal.
+
+- **Prediction intervals (quantile regression)**: Replace point estimates with confidence ranges (e.g., "80% probability the film earns $15M–$120M"). Implementable with `GradientBoostingRegressor(loss='quantile')`. More informative for decision-making than a single predicted value.
+
+### Longer-Term Improvements (Faz 3)
+
+- **Extend dataset to 2024 via TMDB API**: The free TMDB API provides budget/revenue data for recent films. Estimated yield: ~2,000–4,000 films with financial data for 2017–2024. Note: 2020–2021 should be handled separately or flagged — the COVID-19 pandemic reduced global box office by ~80% and would distort any trend analysis if included without context.
+
+- **Add marketing spend**: The single biggest missing variable. No public dataset covers marketing budgets systematically, but studio-reported P&A (prints & advertising) figures exist for major releases through trade publications (Deadline, Box Office Mojo).
+
+- **Cast and director track record**: Historical performance of lead actors and directors as features — a strong proxy for creative execution quality and audience draw. Requires IMDb filmography data (available via IMDb Non-Commercial Datasets).
+
+- **Sentiment analysis on plot overviews**: NLP-based quality proxy from film synopsis text — classifiable as `positive/neutral/negative` using a pre-trained model (e.g., distilBERT). May partially explain the critic score variance unexplained by budget.
 
 ---
 
