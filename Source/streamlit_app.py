@@ -319,6 +319,14 @@ elif page == '🤖 ML — Regression':
         st.info('Run notebook 06 and 07 Export cells to load model results.')
 
     st.markdown('---')
+    st.info(
+        '**Research question context:** The core question — *does budget drive success?* — '
+        'is answered by EDA (r = 0.70 for revenue, r = -0.057 for IMDb). '
+        'ML here is a supplementary prediction layer. '
+        'RMSE $122M > mean revenue $90M: the model gives directional estimates, not precise forecasts. '
+        'See notebook 06 (Phase 8) for the log-transformed model with lower percentage error.'
+    )
+    st.markdown('---')
     st.subheader('Figures')
     fig_tab1, fig_tab2, fig_tab3 = st.tabs(['Feature Importance', 'Actual vs Predicted', 'Residuals'])
 
@@ -496,18 +504,35 @@ elif page == '🎬 Film Predictor':
             rev_m = revenue_pred / 1e6
             roi   = (revenue_pred - budget) / budget * 100
 
+            RESIDUAL_STD_M = 122.1  # RF test set residual std (from notebook 07)
+            low_m  = max(0, rev_m - RESIDUAL_STD_M)
+            high_m = rev_m + RESIDUAL_STD_M
+
             st.metric('Predicted Revenue', f'${rev_m:,.1f}M')
             st.metric('ROI Estimate', f'{roi:+.0f}%')
             st.metric('Hit Probability', f'{hit_prob*100:.1f}%')
+
+            st.info(
+                f'**Prediction range (±1σ):** ${low_m:,.0f}M – ${high_m:,.0f}M  \n'
+                f'Model residual std = $122M. Exact revenue is highly uncertain — '
+                f'use this as a directional estimate, not a precise forecast.'
+            )
 
             if is_hit:
                 st.success(f'**HIT** — predicted revenue ${rev_m:,.1f}M exceeds the ${threshold/1e6:.0f}M threshold.')
             else:
                 st.error(f'**FLOP** — predicted revenue ${rev_m:,.1f}M is below the ${threshold/1e6:.0f}M threshold.')
 
+            if budget < 10_000_000:
+                st.warning(
+                    '**Low-budget caution:** The model was trained on films spanning all budget levels, '
+                    'but systematically over-predicts revenues for films under $10M. '
+                    'Treat this estimate with extra skepticism.'
+                )
+
             st.markdown('---')
             st.caption(
-                f'Model: Random Forest Regressor (R²=0.542) for revenue · '
+                f'Model: Random Forest Regressor (R²=0.542, RMSE=$122M) for revenue · '
                 f'Logistic Regression (AUC=0.860) for hit probability · '
                 f'Threshold: ${threshold/1e6:.1f}M (dataset median)'
             )
