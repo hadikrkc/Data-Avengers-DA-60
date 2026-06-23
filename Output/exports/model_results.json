@@ -2,49 +2,65 @@
   "regression": {
     "linear_regression": {
       "model": "Linear Regression",
-      "MAE_M": 63.59146983813796,
-      "RMSE_M": 117.4942948853504,
-      "R2": 0.5257964707284712,
+      "MAE_M": 68.72780272095433,
+      "RMSE_M": 136.8710094113443,
+      "R2": 0.5973671909794777,
       "type": "regression",
-      "cv_r2_mean": 0.5471,
-      "cv_r2_std": 0.0217
+      "cv_r2_mean": -6.67084887968314e+17,
+      "cv_r2_std": 1.334169775936628e+18
     },
     "random_forest": {
       "model": "Random Forest",
-      "MAE_M": 64.41716616741297,
-      "RMSE_M": 120.68373812596967,
-      "R2": 0.4997020412803215,
+      "MAE_M": 73.54427078662826,
+      "RMSE_M": 137.61231525774818,
+      "R2": 0.5929939882407105,
       "type": "regression",
-      "cv_r2_mean": 0.5356,
-      "cv_r2_std": 0.0403
+      "cv_r2_mean": 0.3687,
+      "cv_r2_std": 0.1313
     },
     "residual_analysis": {
-      "mean_M": -1.12,
-      "std_M": 120.74,
-      "skewness": 2.236,
-      "max_underprediction_M": 1049.7,
-      "max_overprediction_M": -674.0
+      "mean_M": 3.76,
+      "std_M": 137.6,
+      "skewness": 2.127,
+      "max_underprediction_M": 1108.5,
+      "max_overprediction_M": -857.1
     }
   },
   "classification": {
-    "median_threshold_USD": 31076905.0,
+    "median_threshold_USD": 29172529.0,
     "logistic_regression": {
       "Model": "Logistic Regression",
-      "Accuracy": 0.7514,
-      "F1": 0.7259,
-      "AUC-ROC": 0.8475,
+      "Accuracy": 0.7874,
+      "F1": 0.7925,
+      "AUC-ROC": 0.874,
       "type": "classification",
-      "cv_auc_mean": 0.8468,
-      "cv_auc_std": 0.0154
+      "cv_auc_mean": 0.8181,
+      "cv_auc_std": 0.0397
     },
     "random_forest": {
       "Model": "Random Forest",
-      "Accuracy": 0.7268,
-      "F1": 0.7188,
-      "AUC-ROC": 0.8242,
+      "Accuracy": 0.7706,
+      "F1": 0.7788,
+      "AUC-ROC": 0.8497,
       "type": "classification",
-      "cv_auc_mean": 0.8265,
-      "cv_auc_std": 0.0177
+      "cv_auc_mean": 0.7827,
+      "cv_auc_std": 0.0115
+    },
+    "profitability_threshold": {
+      "logistic_regression": {
+        "Model": "LR \u2014 Profitability",
+        "Accuracy": 0.6895,
+        "F1": 0.7904,
+        "AUC-ROC": 0.6519,
+        "type": "classification"
+      },
+      "random_forest": {
+        "Model": "RF \u2014 Profitability",
+        "Accuracy": 0.6322,
+        "F1": 0.7444,
+        "AUC-ROC": 0.6095,
+        "type": "classification"
+      }
     }
   }
 }

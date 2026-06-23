@@ -434,7 +434,7 @@ elif page == '🎬 Film Predictor':
     st.title('Film Predictor')
     st.markdown('Enter a film\'s pre-release information to predict **revenue** and **hit/flop probability**.')
 
-    model_pkg = load_model('random_forest_regressor.pkl')
+    model_pkg = load_model('random_forest_log.pkl')
     clf_pkg   = load_model('logistic_regression.pkl')
 
     if model_pkg is None or clf_pkg is None:
@@ -444,7 +444,7 @@ elif page == '🎬 Film Predictor':
         )
         st.stop()
 
-    reg_model   = model_pkg['model']
+    reg_model    = model_pkg['model']
     reg_features = model_pkg['features']
     clf_model    = clf_pkg['model']
     clf_scaler   = clf_pkg['scaler']
@@ -452,10 +452,6 @@ elif page == '🎬 Film Predictor':
     threshold    = clf_pkg.get('threshold_USD', 29_918_744)
 
     known_genres = sorted({f.replace('primary_genre_', '') for f in reg_features if f.startswith('primary_genre_')})
-    known_decades = sorted({
-        int(f.replace('decade_', '').rstrip('s'))
-        for f in reg_features if f.startswith('decade_')
-    })
 
     st.markdown('---')
     col_in, col_out = st.columns([1, 1])
@@ -467,9 +463,7 @@ elif page == '🎬 Film Predictor':
         runtime = st.slider('Runtime (minutes)', 60, 240, 110)
         release_year = st.number_input('Release Year', min_value=1960, max_value=2030, value=2024)
         genre = st.selectbox('Primary Genre', ['(none)'] + known_genres)
-        decade_val = (release_year // 10) * 10
 
-        st.caption(f'Decade auto-detected: **{decade_val}s**')
         predict_btn = st.button('Predict', type='primary', use_container_width=True)
 
     with col_out:
@@ -481,22 +475,20 @@ elif page == '🎬 Film Predictor':
             row['runtime']      = runtime
             row['release_year'] = release_year
 
-            genre_col  = f'primary_genre_{genre}'
-            decade_col = f'decade_{decade_val}s'
+            genre_col = f'primary_genre_{genre}'
             if genre_col in row:
                 row[genre_col] = 1
-            if decade_col in row:
-                row[decade_col] = 1
 
             X_reg = pd.DataFrame([row])[reg_features]
-            revenue_pred = reg_model.predict(X_reg)[0]
+            rev_log      = reg_model.predict(X_reg)[0]   # prediction in log1p space
+            revenue_pred = np.expm1(rev_log)              # back-transform to USD
 
             X_clf_raw = pd.DataFrame([{f: 0 for f in clf_features}])
             X_clf_raw['budget']       = budget
             X_clf_raw['runtime']      = runtime
             X_clf_raw['release_year'] = release_year
-            if genre_col  in clf_features: X_clf_raw[genre_col]  = 1
-            if decade_col in clf_features: X_clf_raw[decade_col] = 1
+            if genre_col in clf_features:
+                X_clf_raw[genre_col] = 1
             X_clf = X_clf_raw[clf_features]
             X_clf_scaled = clf_scaler.transform(X_clf)
             hit_prob = clf_model.predict_proba(X_clf_scaled)[0][1]
@@ -505,7 +497,7 @@ elif page == '🎬 Film Predictor':
             rev_m = revenue_pred / 1e6
             roi   = (revenue_pred - budget) / budget * 100
 
-            RESIDUAL_STD_M = 122.1  # RF test set residual std (from notebook 07)
+            RESIDUAL_STD_M = 120.0  # approximate back-transformed ±1σ (update after re-run)
             low_m  = max(0, rev_m - RESIDUAL_STD_M)
             high_m = rev_m + RESIDUAL_STD_M
 
@@ -515,8 +507,8 @@ elif page == '🎬 Film Predictor':
 
             st.info(
                 f'**Prediction range (±1σ):** ${low_m:,.0f}M – ${high_m:,.0f}M  \n'
-                f'Model residual std = $122M. Exact revenue is highly uncertain — '
-                f'use this as a directional estimate, not a precise forecast.'
+                f'Revenue is right-skewed — exact figures are uncertain. '
+                f'Use this as a directional estimate, not a precise forecast.'
             )
 
             if is_hit:
@@ -526,16 +518,15 @@ elif page == '🎬 Film Predictor':
 
             if budget < 10_000_000:
                 st.warning(
-                    '**Low-budget caution:** The model was trained on films spanning all budget levels, '
-                    'but systematically over-predicts revenues for films under $10M. '
+                    '**Low-budget caution:** The model systematically over-predicts revenues for films under $10M. '
                     'Treat this estimate with extra skepticism.'
                 )
 
             st.markdown('---')
             st.caption(
-                f'Model: Random Forest Regressor (R²=0.542, RMSE=$122M) for revenue · '
-                f'Logistic Regression (AUC=0.860) for hit probability · '
-                f'Threshold: ${threshold/1e6:.1f}M (dataset median)'
+                f'Model: Random Forest — log(revenue) target (back-transformed via expm1) · '
+                f'Logistic Regression for hit probability · '
+                f'Threshold: ${threshold/1e6:.1f}M (training-set median)'
             )
         else:
             st.info('Fill in the film details and click **Predict**.')

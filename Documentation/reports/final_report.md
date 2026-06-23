@@ -117,9 +117,10 @@ Highest-budget genres: Animation ($59.5M median), Adventure ($40M), Family ($35M
 
 ## 4. Machine Learning Results
 
-**Task:** Predict revenue from pre-release features (budget, runtime, release_year, primary_genre, decade)  
-**Dataset:** 5,267 films → 4,214 train / 1,054 test (80/20, random_state=42)  
-**Features:** 32 (3 numeric + 29 one-hot encoded)
+**Task:** Predict revenue from pre-release features (budget, runtime, release_year, primary_genre)  
+**Dataset:** 5,268 films → **chronological split**: pre-2010 films = train, 2010+ = test  
+**Features:** ~21 (3 numeric + ~18 one-hot encoded genre dummies; `decade` excluded — redundant with `release_year`)  
+**Primary model (Film Predictor):** Random Forest on log1p(revenue) target, back-transformed with expm1()
 
 ### Model Comparison
 
@@ -174,7 +175,7 @@ The model struggles most with extreme blockbusters. A log-transformed target wou
 
 | Dimension | Answer |
 |---|---|
-| **Box office revenue** | **Yes** — strong correlation (r = 0.65, r² ≈ 0.42) |
+| **Box office revenue** | **Yes** — strong correlation (r = 0.65, r² ≈ 0.42); ML confirms (budget = dominant feature, R² ≈ 0.5) |
 | **Audience rating (IMDb)** | **No** — near-zero correlation (r = -0.094) |
 | **Critic score (Tomatometer)** | **Negative** — more budget correlates with lower critic scores (r = -0.221) |
 | **Return on investment** | **Counterintuitively no** — Low tier delivers best ROI (189%) |
@@ -196,7 +197,7 @@ The model struggles most with extreme blockbusters. A log-transformed target wou
 
 - **Log-transform revenue** for ML: reduces right-skew in residuals, likely improves R² by 5–10 points
 - **Add marketing spend** as a feature: likely the single biggest missing variable
-- **Classification variant (completed):** hit/flop prediction implemented in `08_classification.ipynb` — Logistic Regression AUC-ROC 0.860; ROI-based threshold (revenue > budget) is a natural next variant
+- **Classification variant (completed):** hit/flop prediction implemented in `08_classification.ipynb` using two thresholds: median revenue (balanced 50/50 split) and **revenue > budget** (profitability, implemented in Phase 10D)
 - **Sentiment analysis** on film overviews/trailers: proxy for story quality
 - **Director/cast historical performance**: proxy for creative execution quality
 

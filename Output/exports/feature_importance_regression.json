@@ -1,130 +1,90 @@
 [
   {
     "feature": "budget",
-    "importance": 0.65525
+    "importance": 0.565672
   },
   {
     "feature": "runtime",
-    "importance": 0.157722
+    "importance": 0.216372
   },
   {
     "feature": "release_year",
-    "importance": 0.086338
+    "importance": 0.108907
   },
   {
     "feature": "primary_genre_Adventure",
-    "importance": 0.017104
-  },
-  {
-    "feature": "primary_genre_Family",
-    "importance": 0.011892
-  },
-  {
-    "feature": "primary_genre_Animation",
-    "importance": 0.0098
+    "importance": 0.032445
   },
   {
     "feature": "primary_genre_Drama",
-    "importance": 0.008945
+    "importance": 0.014198
   },
   {
-    "feature": "primary_genre_Science Fiction",
-    "importance": 0.008416
-  },
-  {
-    "feature": "decade_2000s",
-    "importance": 0.007608
+    "feature": "primary_genre_Animation",
+    "importance": 0.011334
   },
   {
     "feature": "primary_genre_Comedy",
-    "importance": 0.007266
-  },
-  {
-    "feature": "decade_2010s",
-    "importance": 0.004582
-  },
-  {
-    "feature": "decade_1990s",
-    "importance": 0.004571
+    "importance": 0.011265
   },
   {
     "feature": "primary_genre_Fantasy",
-    "importance": 0.003825
+    "importance": 0.009392
   },
   {
-    "feature": "primary_genre_Thriller",
-    "importance": 0.003118
+    "feature": "primary_genre_Science Fiction",
+    "importance": 0.005219
   },
   {
-    "feature": "primary_genre_Horror",
-    "importance": 0.002767
-  },
-  {
-    "feature": "decade_1980s",
-    "importance": 0.002251
+    "feature": "primary_genre_Family",
+    "importance": 0.004832
   },
   {
     "feature": "primary_genre_Romance",
-    "importance": 0.002247
+    "importance": 0.004807
+  },
+  {
+    "feature": "primary_genre_Thriller",
+    "importance": 0.004623
+  },
+  {
+    "feature": "primary_genre_Horror",
+    "importance": 0.003621
   },
   {
     "feature": "primary_genre_Crime",
-    "importance": 0.001939
-  },
-  {
-    "feature": "primary_genre_War",
-    "importance": 0.001174
-  },
-  {
-    "feature": "decade_1970s",
-    "importance": 0.000964
-  },
-  {
-    "feature": "decade_1950s",
-    "importance": 0.00065
-  },
-  {
-    "feature": "primary_genre_Music",
-    "importance": 0.00034
-  },
-  {
-    "feature": "decade_1960s",
-    "importance": 0.000336
+    "importance": 0.002277
   },
   {
     "feature": "primary_genre_Mystery",
-    "importance": 0.000261
+    "importance": 0.002052
   },
   {
     "feature": "primary_genre_Western",
-    "importance": 0.000255
+    "importance": 0.001163
+  },
+  {
+    "feature": "primary_genre_Music",
+    "importance": 0.000668
+  },
+  {
+    "feature": "primary_genre_War",
+    "importance": 0.000607
   },
   {
     "feature": "primary_genre_History",
-    "importance": 0.000138
-  },
-  {
-    "feature": "decade_1930s",
-    "importance": 7.5e-05
-  },
-  {
-    "feature": "decade_1920s",
-    "importance": 7.2e-05
+    "importance": 0.000303
   },
   {
     "feature": "primary_genre_Documentary",
-    "importance": 7.2e-05
-  },
-  {
-    "feature": "decade_1940s",
-    "importance": 2e-05
-  },
-  {
-    "feature": "primary_genre_Foreign",
-    "importance": 0.0
+    "importance": 0.000229
   },
   {
     "feature": "primary_genre_TV Movie",
-    "importance": 0.0
+    "importance": 1.2e-05
+  },
+  {
+    "feature": "primary_genre_Foreign",
+    "importance": 2e-06
   }
 ]
