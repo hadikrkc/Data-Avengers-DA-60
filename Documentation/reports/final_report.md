@@ -71,16 +71,16 @@ The direction of all findings is unchanged. The MAPE reduction (135,000% → 2,8
 
 ### Finding 1 — Budget Predicts Revenue (r = 0.65)
 
-The strongest signal in the dataset. Pearson r = **0.650** on log-log scale (p ≈ 0); r² ≈ 0.42 — budget explains approximately 42% of revenue variance. Higher budget reliably predicts higher revenue, but scatter is wide: the same Blockbuster budget can produce anywhere from $31M to $2.79B in revenue. **Budget is a necessary but not sufficient condition for box office success.**
+The strongest signal in the dataset. Pearson r = **0.650** on log-log scale (n = 5,280, p < .001); r² ≈ 0.42 — budget explains approximately 42% of revenue variance. Higher budget reliably predicts higher revenue, but scatter is wide: the same Blockbuster budget can produce anywhere from $31M to $2.79B in revenue. **Budget is a necessary but not sufficient condition for box office success.**
 
 ### Finding 2 — Budget Does Not Predict Quality
 
-| Metric | Pearson r | Practical interpretation |
-|---|---|---|
-| Budget vs IMDb rating | **-0.094** | Near-zero: no meaningful relationship |
-| Budget vs Tomatometer | **-0.221** | Moderate negative: more budget = lower critic scores |
+| Metric | Pearson r | n | p-value | Practical interpretation |
+|---|---|---|---|---|
+| Budget vs IMDb rating | **-0.094** | 5,278 | p < .001 | Statistically significant but practically negligible |
+| Budget vs Tomatometer | **-0.221** | 4,326 | p < .001 | Moderate negative: more budget = lower critic scores |
 
-Budget explains less than 0.3% of IMDb score variance. Higher-budget films score slightly lower with critics, likely because large studios favor commercial safety over creative risk.
+Budget explains less than 1% of IMDb score variance. Even though the IMDb relationship is statistically significant (large sample size makes even tiny effects detectable), it is too small to be practically meaningful. Higher-budget films score slightly lower with critics, likely because large studios favor commercial safety over creative risk.
 
 ### Finding 3 — Low Budget Delivers the Best ROI
 

@@ -85,7 +85,7 @@ if not exports_ready():
     )
 
 st.sidebar.markdown('---')
-st.sidebar.markdown('**Dataset:** 5,381 films · 20 features')
+st.sidebar.markdown('**Dataset:** 5,280 films · 20 features')
 st.sidebar.markdown('**Data Sources**')
 st.sidebar.markdown(
     '- [The Movies Dataset](https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset)\n'
@@ -104,10 +104,10 @@ if page == '📊 Overview':
     st.markdown('---')
 
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric('Films Analyzed', '5,381')
-    col2.metric('Budget → Revenue (r)', '0.70')
-    col3.metric('Budget → IMDb (r)', '-0.057')
-    col4.metric('Low-Budget Median ROI', '180%')
+    col1.metric('Films Analyzed', '5,280')
+    col2.metric('Budget → Revenue (r)', '0.650')
+    col3.metric('Budget → IMDb (r)', '-0.094')
+    col4.metric('Low-Budget Median ROI', '189%')
 
     st.markdown('---')
 
@@ -116,15 +116,16 @@ if page == '📊 Overview':
     with col_l:
         st.markdown('### Key Findings')
         st.markdown("""
-| Dimension | Finding |
-|---|---|
-| Budget → Revenue | Strong positive — r = **0.70**, r² ≈ 0.50 |
-| Budget → IMDb Rating | Near-zero — r = **-0.057**; budget does not buy quality |
-| Budget → Tomatometer | Slightly negative — r = **-0.176** |
-| Best ROI tier | **Low budget** — median ROI 180% vs 69% for High tier |
+| Dimension | Finding | p-value |
+|---|---|---|
+| Budget → Revenue | Strong positive — r = **0.650**, r² ≈ 0.42 | p < .001 |
+| Budget → IMDb Rating | Near-zero — r = **-0.094**; budget does not buy quality | p < .001 |
+| Budget → Tomatometer | Slightly negative — r = **-0.221** | p < .001 |
+| Best ROI tier | **Low budget** — median ROI 189% vs 70% for High tier | — |
 
 **Short answer:** Budget predicts revenue but not quality.
 Low-budget films deliver better ROI and equal or higher audience ratings.
+All three correlations are statistically significant (p < .001), but IMDb's near-zero r means the *effect size* is negligible despite the significance.
         """)
 
     with col_r:
@@ -181,7 +182,7 @@ elif page == '🔍 EDA — Exploratory Analysis':
                 log_x=True, log_y=True,
                 opacity=0.4,
                 labels={'budget': 'Budget (USD)', 'revenue': 'Revenue (USD)', 'budget_tier': 'Tier'},
-                title='Budget vs Revenue (log scale) — Pearson r = 0.70',
+                title='Budget vs Revenue (log scale) — Pearson r = 0.650, p < .001',
                 color_discrete_map={
                     'Low': '#4e9af1', 'Mid': '#f4a261',
                     'High': '#e76f51', 'Blockbuster': '#2d6a4f'
@@ -194,7 +195,7 @@ elif page == '🔍 EDA — Exploratory Analysis':
                 st.image(img, use_container_width=True)
             else:
                 st.info('Dataset not found. Run notebook 02 first or export figures from notebook 04.')
-        st.markdown('**r = 0.70** — budget explains ~50% of revenue variance. Wide scatter means budget is necessary but not sufficient.')
+        st.markdown('**r = 0.650, p < .001** — budget explains ~42% of revenue variance. Wide scatter means budget is necessary but not sufficient.')
 
     with tab2:
         st.subheader('ROI by Budget Tier')
@@ -220,7 +221,7 @@ elif page == '🔍 EDA — Exploratory Analysis':
                 st.image(img, use_container_width=True)
             else:
                 st.info('Run notebook 03 Export cell first.')
-        st.markdown('Low-budget films: **180% median ROI**. Blockbuster: 116%. Mid–High tier ($20M–$80M) is the riskiest zone.')
+        st.markdown('Low-budget films: **189% median ROI**. Blockbuster: 116%. Mid–High tier ($20M–$80M) is the riskiest zone.')
 
     with tab3:
         st.subheader('Genre Analysis')
@@ -322,7 +323,7 @@ elif page == '🤖 ML — Regression':
     st.markdown('---')
     st.info(
         '**Research question context:** The core question — *does budget drive success?* — '
-        'is answered by EDA (r = 0.70 for revenue, r = -0.057 for IMDb). '
+        'is answered by EDA (r = 0.650, p < .001 for revenue; r = -0.094, p < .001 for IMDb). '
         'ML here is a supplementary prediction layer. '
         'RMSE $122M > mean revenue $90M: the model gives directional estimates, not precise forecasts. '
         'See notebook 06 (Phase 8) for the log-transformed model with lower percentage error.'
@@ -835,7 +836,7 @@ elif page == '🔬 Data Distributions':
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == '📁 Dataset':
     st.title('Dataset — movies_merged.csv')
-    st.markdown('Cleaned and merged dataset used in all analyses. 5,381 films · 20 columns.')
+    st.markdown('Cleaned and merged dataset used in all analyses. 5,280 films · 20 columns.')
 
     df = load_df()
 

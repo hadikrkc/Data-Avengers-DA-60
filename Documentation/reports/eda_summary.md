@@ -9,17 +9,17 @@
 ## Key Findings
 
 ### 1. Budget → Revenue (r = 0.65)
-The strongest signal in the dataset. Log-log Pearson r = **0.650** (p ≈ 0); r² ≈ 0.42 means budget explains ~42% of revenue variance. Higher budget reliably predicts higher revenue, but scatter is wide — especially at the top end. Budget is a necessary but not sufficient condition for box office success.
+The strongest signal in the dataset. Log-log Pearson r = **0.650** (n = 5,280, p < .001); r² ≈ 0.42 means budget explains ~42% of revenue variance. Higher budget reliably predicts higher revenue, but scatter is wide — especially at the top end. Budget is a necessary but not sufficient condition for box office success.
 
 > **Data quality note:** Previous value was r = 0.704 on the uncleaned dataset (5,381 films including
 > entries with budget as low as $1). After removing 101 records with budget or revenue < $10,000
 > (data entry errors), r = 0.650. The relationship remains strong and the conclusion is unchanged.
 
 ### 2. Budget → IMDb Rating (r = -0.094)
-Near-zero correlation. Budget explains less than 1% of IMDb score variance. Spending more does not produce better audience ratings. Quality cannot be bought.
+Near-zero correlation (n = 5,278, p < .001). Statistically significant only because of the large sample size — budget explains less than 1% of IMDb score variance. Spending more does not produce better audience ratings. Quality cannot be bought.
 
 ### 3. Budget → Tomatometer (r = -0.221)
-Statistically significant and moderately negative. Higher-budget films score lower with critics, likely because large studios favor commercial safety over artistic risk. This signal is slightly stronger after removing data entry error records.
+Statistically significant (n = 4,326, p < .001) and moderately negative. Higher-budget films score lower with critics, likely because large studios favor commercial safety over artistic risk. This signal is slightly stronger after removing data entry error records.
 
 ### 4. ROI by Budget Tier
 
